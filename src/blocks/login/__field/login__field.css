@@ -1,0 +1,6 @@
+.login__field {
+    width: 100%;
+    min-height: 58px;
+    display: flex;
+    flex-direction: column;
+}
