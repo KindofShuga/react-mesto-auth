@@ -15,6 +15,7 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
             link: formValues.link
         });
     }
+
     return (
         <PopupWithForm
             name="place"
@@ -36,7 +37,7 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
                     maxLength="30"
                     required
                 />
-                <span className="title-input-error"></span>
+
             </label>
             <label className="popup__field">
                 <input
@@ -48,7 +49,7 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
                     placeholder="Ссылка на картинку"
                     required
                 />
-                <span className="img-input-error"></span>
+
             </label>
         </PopupWithForm>
     );

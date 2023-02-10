@@ -1,0 +1,13 @@
+.header__link-exit {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    line-height: 22px;
+    color: #A9A9A9;
+    cursor: pointer;
+    transition: opacity .2s ease-in;
+}
+
+.header__link-exit:hover {
+    opacity: .6;
+}

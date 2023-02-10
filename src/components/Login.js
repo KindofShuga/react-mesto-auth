@@ -1,31 +1,31 @@
 import LogWithForm from './LogWithForm.js';
-import { useState, useEffect, useContext } from 'react';
+import { useState } from 'react';
 
-export default function Login() {
-    const [buttonTitle, setButtonTitle] = useState("Войти");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+export default function Login({ handleLogin }) {
+    const [userData, setUserData] = useState({ email: "", password: "" });
+    function handleChange(e) {
+        const { name, value } = e.target;
 
-    function handleEmailChange(e) {
-        setEmail(e.target.value);
+        setUserData(prevState => ({
+            ...prevState,
+            [name]: value
+        })
+        );
     }
-    function handlePasswordChange(e) {
-        setPassword(e.target.value);
-    }
+
     function handleSubmit(e) {
-        // e.preventDefault();
-        // setButtonTitle("Войти...");
-        // onUpdateUser({
-        //     email: email,
-        //     password: password,
-        // });
+        e.preventDefault();
+        handleLogin({
+            email: userData.email,
+            password: userData.password
+        })
     }
     return (
         <section className="login">
             <LogWithForm
                 title="Вход"
                 aria="Войти"
-                buttonTitle={buttonTitle}
+                buttonTitle="Войти"
                 onSubmit={handleSubmit}
             >
                 <label className="login__field">
@@ -34,20 +34,18 @@ export default function Login() {
                         id="email-input"
                         name="email"
                         className="login__input login__input_el_email"
-                        value={email}
-                        onChange={handleEmailChange}
+                        onChange={handleChange}
                         placeholder="Email" minLength="2" maxLength="40" required
                     />
                     <span className="email-input-error"></span>
                 </label>
                 <label className="login__field">
                     <input
-                        type="text"
+                        type="password"
                         id="password-input"
                         name="password"
                         className="login__input login__input_el_password"
-                        value={password}
-                        onChange={handlePasswordChange}
+                        onChange={handleChange}
                         placeholder="Пароль" minLength="2" maxLength="200" required
                     />
                     <span className="password-input-error"></span>

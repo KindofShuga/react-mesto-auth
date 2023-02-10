@@ -1,5 +1,5 @@
-import React from 'react';
-import { Routes, Route, Switch } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header.js';
 import Login from './Login';
 import Register from './Register';
@@ -11,19 +11,66 @@ import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
 import ConfirmPopup from './ConfirmPopup.js';
 import ImagePopup from './ImagePopup.js';
+import InfoTooltip from './InfoTooltip'
 import api from '../utils/api';
-import { useState, useEffect } from 'react';
+import * as auth from '../utils/auth'
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 export default function App() {
+  const navigate = useNavigate();
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
+  const [isFailInfoTooltip, setIsFailInfoTooltip] = useState(false);
+  const [isSuccessInfoTooltip, setIsSuccessInfoTooltip] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedDeletedCard, setSelectedDeletedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
+
+  function handleLogin({ email, password }) {
+    return auth.authorize(email, password)
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem('jwt', data.token);
+          setLoggedIn(true);
+          setUserEmail(email);
+          navigate("/");
+        }
+      })
+      .catch(() => {
+        setIsFailInfoTooltip(true);
+      });
+  }
+
+  function handleRegister({ email, password }) {
+    return auth.register(email, password)
+      .then(() => {
+        setIsSuccessInfoTooltip(true);
+        setLoggedIn(true);
+        setUserEmail(email);
+        navigate("/");
+      })
+      .catch(err => console.log(`Ошибка: ${err}`));
+  }
+
+  function tokenCheck() {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      auth.checkToken(jwt)
+        .then((res) => {
+          if (res) {
+            setLoggedIn(true);
+            setUserEmail(res.data.email);
+            navigate("/");
+          }
+        })
+        .catch(err => console.log(`Ошибка: ${err}`));
+    }
+  }
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
@@ -77,6 +124,8 @@ export default function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsConfirmPopupOpen(false);
+    setIsFailInfoTooltip(false);
+    setIsSuccessInfoTooltip(false);
     setSelectedCard(null);
   }
 
@@ -94,6 +143,7 @@ export default function App() {
   }
 
   useEffect(() => {
+    tokenCheck();
     api.getUserAndCard()
       .then(([user, cards]) => {
         setCurrentUser(user);
@@ -105,27 +155,34 @@ export default function App() {
   return (
     <>
       <CurrentUserContext.Provider value={currentUser}>
-        <Header />
+        <Header userEmail={userEmail} />
         <main>
           <Routes>
-            {/* <Route path="mesto-react-auth/" element={
-              <ProtectedRoute element={
-                <Main
-                  onEditProfile={handleEditProfileClick}
-                  onAddPlace={handleAddPlaceClick}
-                  onEditAvatar={handleEditAvatarClick}
-                  onConfirm={handleConfirmPopupClick}
-                  onCardClick={handleCardClick}
-                  onCardLike={handleCardLike}
-                  onCardClickDelete={handleDeletedCardClick}
-                  cards={cards}
-                />
-              } loggedIn={this.state.loggedIn}
+            <Route path="/" element={
+              <ProtectedRoute
+                loggedIn={loggedIn}
+                element={Main}
+                onEditProfile={handleEditProfileClick}
+                onAddPlace={handleAddPlaceClick}
+                onEditAvatar={handleEditAvatarClick}
+                onConfirm={handleConfirmPopupClick}
+                onCardClick={handleCardClick}
+                onCardLike={handleCardLike}
+                onCardClickDelete={handleDeletedCardClick}
+                cards={cards}
               />
             }
-            /> */}
-            <Route path="mesto-react-auth/sign-up" element={<Register />} />
-            <Route path="mesto-react-auth/sign-in" element={<Login />} />
+            />
+            <Route path="/sign-in" element={<Login handleLogin={handleLogin} />} />
+            <Route path="/sign-up" element={<Register handleRegister={handleRegister} />} />
+            <Route path="*" element={
+              loggedIn ? (
+                <Navigate to="/" />
+              ) : (
+                <Navigate to="/sign-in" />
+              )
+            }
+            />
           </Routes>
         </main>
         <Footer />
@@ -158,6 +215,16 @@ export default function App() {
             onClose={closeAllPopups}
             onCardDelete={handleCardDelete}
             deletedCard={selectedDeletedCard}
+          />}
+        {isFailInfoTooltip &&
+          <InfoTooltip
+            onClose={closeAllPopups}
+            isFailInfoTooltip={isFailInfoTooltip}
+          />}
+        {isSuccessInfoTooltip &&
+          <InfoTooltip
+            onClose={closeAllPopups}
+            isSuccessInfoTooltip={isSuccessInfoTooltip}
           />}
       </CurrentUserContext.Provider>
     </>

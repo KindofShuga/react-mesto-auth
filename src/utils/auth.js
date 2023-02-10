@@ -4,39 +4,31 @@ const getResponse = (res) => {
     return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
 };
 
-export const register = (username, password, email) => {
+export const register = (email, password) => {
     return fetch(`${BASE_URL}/signup`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password, email })
+        body: JSON.stringify({ email, password })
     })
         .then(getResponse);
 };
 
-export const authorization = (identifier, password) => {
+export const authorize = (email, password) => {
     return fetch(`${BASE_URL}/signin`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ identifier, password })
+        body: JSON.stringify({ email, password })
     })
         .then(getResponse);
-        // .then((data) => {
-        //     if (data.user) {
-        //         localStorage.setItem('jwt', data.jwt);
-        //         return data;
-        //     } else {
-        //         return;
-        //     }
-        // });
 };
 
-export const getContent = (token) => {
+export const checkToken = (token) => {
     return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
         headers: {

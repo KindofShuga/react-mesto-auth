@@ -1,0 +1,36 @@
+#check {
+    display: none;
+}
+
+.header__fa-bars {
+    margin-right: 21px;
+    min-width: 24px;
+    min-height: 18px;
+    background-image: url(/src/images/fa-bars-icon.svg);
+    background-size: 24px 18px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: opacity .2s ease-in;
+    display: none;
+}
+
+.header__fa-bars:hover {
+    opacity: .6;
+}
+
+#check:checked~.header__fa-bars {
+    background-image: url(/src/images/close-button.svg);
+    min-width: 20px;
+    min-height: 20px;
+    background-size: 20px 20px;
+    grid-area: 2;
+    justify-self: flex-end;
+}
+
+@media (max-width: 390px) {
+    .header__fa-bars {
+        display: block;
+        align-self: flex-end;
+        justify-self: flex-end;
+    }
+}

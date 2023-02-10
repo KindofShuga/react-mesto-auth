@@ -1,6 +1,15 @@
 .login {
     margin: 0 auto;
+    padding: 0;
     max-width: 358px;
+    min-height: 522px;
     display: flex;
     flex-direction: column;
+}
+
+@media screen and (max-width: 390px) {
+    .login {
+        padding: 0 30px;
+        min-height: 511px;
+    }
 }

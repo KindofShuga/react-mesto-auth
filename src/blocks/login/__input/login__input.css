@@ -4,21 +4,33 @@
     font-weight: 400;
     font-size: 14px;
     line-height: 17px;
-    color: #000;
+    color: white;
     border: none;
     background: none;
     border-bottom: 2px solid #CCCCCC;
 }
 
 .login__input::placeholder {
-    color: #C4C4C4;
+    color: #CCCCCC;
     opacity: 1;
 }
 
 .login__input:-ms-input-placeholder {
-    color: #C4C4C4;
+    color: #CCCCCC;
 }
 
 .login__input::-ms-input-placeholder {
-    color: #C4C4C4;
+    color: #CCCCCC;
+}
+
+.login__input:-webkit-autofill,
+.login__input:-webkit-autofill:hover,
+.login__input:-webkit-autofill:focus,
+.login__input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+    box-shadow: 0 0 0px 1000px #000 inset;
+}
+
+.login__input:-webkit-autofill {
+    -webkit-text-fill-color: white;
 }

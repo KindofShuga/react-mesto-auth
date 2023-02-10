@@ -1,32 +1,36 @@
 import LogWithForm from './LogWithForm.js';
-import { useState, useEffect, useContext } from 'react';
+import { useState } from 'react';
 
-export default function Register() {
-    const [buttonTitle, setButtonTitle] = useState("Зарегистрироваться");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+export default function Register({ handleRegister }) {
+    const [userData, setUserData] = useState({ email: "", password: "" });
 
-    function handleEmailChange(e) {
-        setEmail(e.target.value);
+    function handleChange(e) {
+        const { name, value } = e.target;
+
+        setUserData(prevState => ({
+            ...prevState,
+            [name]: value
+        })
+        );
     }
-    function handlePasswordChange(e) {
-        setPassword(e.target.value);
-    }
+
     function handleSubmit(e) {
-        // e.preventDefault();
-        // setButtonTitle("Зарегистрироваться...");
-        // onUpdateUser({
-        //     email: email,
-        //     password: password,
-        // });
+        e.preventDefault();
+        handleRegister({
+            email: userData.email,
+            password: userData.password
+        })
     }
+
     return (
         <section className="login">
             <LogWithForm
                 title="Регистрация"
                 aria="Зарегистрироваться"
-                buttonTitle={buttonTitle}
+                buttonTitle="Зарегистрироваться"
                 onSubmit={handleSubmit}
+                linkTo="/sign-in"
+                linkTitle="Уже зарегистрированы? Войти"
             >
                 <label className="login__field">
                     <input
@@ -34,26 +38,23 @@ export default function Register() {
                         id="email-input"
                         name="email"
                         className="login__input login__input_el_email"
-                        value={email}
-                        onChange={handleEmailChange}
+                        onChange={handleChange}
                         placeholder="Email" minLength="2" maxLength="40" required
                     />
                     <span className="email-input-error"></span>
                 </label>
                 <label className="login__field">
                     <input
-                        type="text"
+                        type="password"
                         id="password-input"
                         name="password"
                         className="login__input login__input_el_password"
-                        value={password}
-                        onChange={handlePasswordChange}
+                        onChange={handleChange}
                         placeholder="Пароль" minLength="2" maxLength="200" required
                     />
                     <span className="password-input-error"></span>
                 </label>
             </LogWithForm>
-            <a className="login__link" href="#">Уже зарегистрированы? Войти</a>
         </section>
     );
 }

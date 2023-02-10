@@ -1,0 +1,14 @@
+.header__nav {
+    padding-bottom: 41px;
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+}
+
+@media screen and (max-width: 390px) {
+    .header__nav {
+        padding-bottom: 31px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
