@@ -42,7 +42,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
                     id="name-input"
                     name="name"
                     className="popup__input popup__input_el_name"
-                    value={name}
+                    value={name || ''}
                     onChange={handleNameChange}
                     placeholder="Имя" minLength="2" maxLength="40" required
                 />
@@ -54,7 +54,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
                     id="job-input"
                     name="job"
                     className="popup__input popup__input_el_job"
-                    value={job}
+                    value={job || ''}
                     onChange={handleJobChange}
                     placeholder="О себе" minLength="2" maxLength="200" required
                 />

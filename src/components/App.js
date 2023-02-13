@@ -15,6 +15,8 @@ import InfoTooltip from './InfoTooltip'
 import api from '../utils/api';
 import * as auth from '../utils/auth'
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import failIcon from '../images/fail-icon.svg';
+import successIcon from '../images/success-icon.svg';
 
 export default function App() {
   const navigate = useNavigate();
@@ -50,11 +52,11 @@ export default function App() {
     return auth.register(email, password)
       .then(() => {
         setIsSuccessInfoTooltip(true);
-        setLoggedIn(true);
-        setUserEmail(email);
-        navigate("/");
+        navigate("/sign-in");
       })
-      .catch(err => console.log(`Ошибка: ${err}`));
+      .catch(() => {
+        setIsFailInfoTooltip(true);
+      });
   }
 
   function tokenCheck() {
@@ -129,7 +131,6 @@ export default function App() {
     setSelectedCard(null);
   }
 
-
   function handleCardClick(card) {
     setSelectedCard(card);
   }
@@ -144,14 +145,15 @@ export default function App() {
 
   useEffect(() => {
     tokenCheck();
-    api.getUserAndCard()
-      .then(([user, cards]) => {
-        setCurrentUser(user);
-        setCards(cards);
-      })
-      .catch(err => console.log(`Ошибка: ${err}`));
-  }, []);
-
+    if (loggedIn) {
+      api.getUserAndCard()
+        .then(([user, cards]) => {
+          setCurrentUser(user);
+          setCards(cards);
+        })
+        .catch(err => console.log(`Ошибка: ${err}`));
+    }
+  }, [loggedIn]);
   return (
     <>
       <CurrentUserContext.Provider value={currentUser}>
@@ -186,46 +188,36 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
-        {isEditProfilePopupOpen &&
-          <EditProfilePopup
-            isOpen={isEditProfilePopupOpen}
-            onClose={closeAllPopups}
-            onUpdateUser={handleUpdateUser}
-          />}
-        {isAddPlacePopupOpen &&
-          <AddPlacePopup
-            isOpen={isAddPlacePopupOpen}
-            onClose={closeAllPopups}
-            onAddPlace={handleAddPlaceSubmit}
-          />}
-        {isEditAvatarPopupOpen &&
-          <EditAvatarPopup
-            isOpen={isEditAvatarPopupOpen}
-            onClose={closeAllPopups}
-            onUpdateAvatar={handleUpdateAvatar}
-          />}
-        {selectedCard &&
-          <ImagePopup
-            card={selectedCard}
-            onClose={closeAllPopups}
-          />}
-        {isConfirmPopupOpen &&
-          <ConfirmPopup
-            isOpen={isConfirmPopupOpen}
-            onClose={closeAllPopups}
-            onCardDelete={handleCardDelete}
-            deletedCard={selectedDeletedCard}
-          />}
-        {isFailInfoTooltip &&
-          <InfoTooltip
-            onClose={closeAllPopups}
-            isFailInfoTooltip={isFailInfoTooltip}
-          />}
-        {isSuccessInfoTooltip &&
-          <InfoTooltip
-            onClose={closeAllPopups}
-            isSuccessInfoTooltip={isSuccessInfoTooltip}
-          />}
+        <EditProfilePopup
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+          onUpdateUser={handleUpdateUser}
+        />
+        <AddPlacePopup
+          isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopups}
+          onAddPlace={handleAddPlaceSubmit}
+        />
+        <EditAvatarPopup
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onUpdateAvatar={handleUpdateAvatar}
+        />
+        <ImagePopup
+          card={selectedCard}
+          onClose={closeAllPopups}
+        />
+        <ConfirmPopup
+          isOpen={isConfirmPopupOpen}
+          onClose={closeAllPopups}
+          onCardDelete={handleCardDelete}
+          deletedCard={selectedDeletedCard}
+        />
+        <InfoTooltip
+          isOpen={isSuccessInfoTooltip || isFailInfoTooltip}
+          onClose={closeAllPopups}
+          isSuccessInfoTooltip={isSuccessInfoTooltip}
+        />
       </CurrentUserContext.Provider>
     </>
   );
